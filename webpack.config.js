@@ -29,14 +29,15 @@ module.exports = {
 	},
 
 	plugins: [
-        // new webpack.optimize.UglifyJsPlugin({	// compress
-        //     compress: {
-        //         warnings: false,
-        //     },
-        //     output: {
-        //         comments: false,
-        //     },
-        // }),
+        new webpack.optimize.UglifyJsPlugin({	// compress
+            compress: {
+                warnings: true,
+            },
+            output: {
+                comments: false,
+            },
+        	sourceMap: true
+        }),
      	// new webpack.DefinePlugin({			// define environment variable
 	    //   'process.env.NODE_ENV': JSON.stringify('production')
 	    // }),
@@ -51,4 +52,24 @@ module.exports = {
     ],
 	watch: true,
 	devtool: "inline-source-map"
+}
+
+if (process.env.NODE_ENV === 'production') {
+  module.exports.devtool = 'source-map'
+  module.exports.plugins = (module.exports.plugins || []).concat([
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      sourceMap: true,
+      compress: {
+        warnings: false
+      }
+    }),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true
+    })
+  ])
 }

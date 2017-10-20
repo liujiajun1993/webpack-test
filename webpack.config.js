@@ -13,19 +13,17 @@ module.exports = {
 			test: /\.js/,
 			exclude: /(node_modules|bower_components)/,
 			use: 'babel-loader'
-		},
-		{
-			test: /\.css/,
-			use: ['style-loader','css-loader', 'postcss-loader']
-		},
-		{
+		}, {
 			test: /\.less/,
-			use: ['style-loader','css-loader', 'less-loader', 'postcss-loader'],
-			// use: ExtractTextPlugin.extract({
-			// 	fallback: 'style-loader',
-			// 	use: ['css-loader', 'less-loader', 'postcss-loader']
-			// })
-		}]
+			//use: ['style-loader','css-loader', 'less-loader', 'postcss-loader'],
+			use: ExtractTextPlugin.extract({
+				fallback: 'style-loader',
+				use: ['css-loader', 'less-loader', 'postcss-loader']
+			})
+		}, {
+            test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+            loader: 'url-loader?limit=100000'
+        }]
 	},
 
 	plugins: [
@@ -38,20 +36,21 @@ module.exports = {
             },
         	sourceMap: true
         }),
-     	// new webpack.DefinePlugin({			// define environment variable
-	    //   'process.env.NODE_ENV': JSON.stringify('production')
-	    // }),
 	    new webpack.LoaderOptionsPlugin({		// debug mode
 			debug: true
 		}),
 		new webpack.HotModuleReplacementPlugin(),	// hot module
-		// new ExtractTextPlugin('style.css', {		// unique package，单独打包css文件
-  		//     allChunks: true
-  		// }),
-  		// new ExtractTextPlugin('style.css'),
+		new ExtractTextPlugin('style.css', {		// unique package，单独打包css文件
+  		    allChunks: false
+  		}),
     ],
 	watch: true,
-	devtool: "inline-source-map"
+	devtool: "inline-source-map",
+    devServer: {
+        port: 8080,
+        contentBase: '.',
+        disableHostCheck: false,
+    },
 }
 
 if (process.env.NODE_ENV === 'production') {

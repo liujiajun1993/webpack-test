@@ -6,7 +6,7 @@ module.exports = {
 	entry: path.resolve(__dirname, 'src/js/alipay.js'),
 	output: {
 		path: path.resolve(__dirname, 'build'),
-		filename: 'bundle.js'
+		filename: '[name].bundle.js'
 	},
 	module:{
 		rules:[{
@@ -22,7 +22,7 @@ module.exports = {
 			})
 		}, {
             test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-            loader: 'url-loader?limit=100000'
+            use: 'url-loader?limit=100000'
         }]
 	},
 
@@ -31,18 +31,13 @@ module.exports = {
             compress: {
                 warnings: true,
             },
-            output: {
-                comments: false,
-            },
         	sourceMap: true
         }),
 	    new webpack.LoaderOptionsPlugin({		// debug mode
 			debug: true
 		}),
 		new webpack.HotModuleReplacementPlugin(),	// hot module
-		new ExtractTextPlugin('style.css', {		// unique package，单独打包css文件
-  		    allChunks: false
-  		}),
+		new ExtractTextPlugin('style.css'),	// unique package，单独打包css文件
     ],
 	watch: true,
 	devtool: "inline-source-map",
@@ -51,24 +46,4 @@ module.exports = {
         contentBase: '.',
         disableHostCheck: false,
     },
-}
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = 'source-map'
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
-  ])
 }

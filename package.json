@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "alipay.js",
-  "dependencies": {},
+  "dependencies": {
+    "jQuery": "^1.7.4"
+  },
   "devDependencies": {
     "babel-core": "^6.23.1",
     "babel-loader": "^6.3.2",

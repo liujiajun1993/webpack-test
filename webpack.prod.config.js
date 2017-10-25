@@ -2,15 +2,31 @@ var path = require('path');
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CleanWebPackPlugin = require("clean-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
-    entry: path.resolve(__dirname, 'src/js/alipay.js'),
+    entry: {
+        index: path.resolve(__dirname, 'src/js/alipay.js')
+    },
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: '[name].[chunkhash:8].js',
     },
     module:{
         rules:[{
+            test: /\.less/,
+            loader: ExtractTextPlugin.extract({
+                fallback: 'style-loader',
+                use: [{
+                    loader: 'css-loader',
+                    options: {
+                        minimize: true
+                    }
+                }, {
+                    loader: 'less-loader'
+                }]
+            })
+        }, {
             test: require.resolve('jquery'),
             use: [{
                 loader: 'expose-loader',
@@ -24,12 +40,6 @@ module.exports = {
             exclude: /(node_modules|bower_components)/,
             use: 'babel-loader'
         }, {
-            test: /\.less/,
-            use: ExtractTextPlugin.extract({
-                fallback: 'style-loader',
-                use: ['css-loader', 'less-loader', 'postcss-loader']
-            })
-        }, {
             test: /\.(png|woff|woff2|eot|ttf|svg)$/,
             use: 'url-loader?limit=100000'
         }]
@@ -37,10 +47,12 @@ module.exports = {
 
     plugins: [
         new CleanWebPackPlugin(['build']),
-        new webpack.optimize.UglifyJsPlugin({   // compress
+        new UglifyJsPlugin({   // compress
             sourceMap: false,
-            compress: {
-                warnings: false
+            uglifyOptions: {
+                compress: {
+                    warnings: false
+                }
             }
         }),
         new webpack.DefinePlugin({
@@ -48,7 +60,8 @@ module.exports = {
                 NODE_ENV: '"production"'
             }
         }),
-        new ExtractTextPlugin('style.css', {        // unique package，单独打包css文件
+        new ExtractTextPlugin({        // unique package，单独打包css文件
+            filename: 'style.css',
             allChunks: false
         }),
     ],

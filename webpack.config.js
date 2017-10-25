@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
 	entry: path.resolve(__dirname, 'src/js/alipay.js'),
@@ -35,9 +36,11 @@ module.exports = {
 	},
 
 	plugins: [
-        new webpack.optimize.UglifyJsPlugin({	// compress
-            compress: {
-                warnings: true,
+        new UglifyJsPlugin({	// compress
+            uglifyOptions: {
+                compress: {
+                    warnings: false
+                }
             },
         	sourceMap: true
         }),

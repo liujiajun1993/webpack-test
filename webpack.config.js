@@ -2,12 +2,18 @@ var path = require('path');
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
-	entry: path.resolve(__dirname, 'src/js/alipay.js'),
+	entry: {
+        index: path.resolve(__dirname, 'src/js/alipay.js'),
+        vendor: ['lodash'],
+    },
 	output: {
-		path: path.resolve(__dirname, 'build'),
-		filename: '[name].bundle.js'
+		path: path.resolve(__dirname, 'build'),   //location to store build file in disk
+        publicPath: '/build',   //location for webpack-dev-server to store build file in memory
+		filename: '[name].bundle.js',
+        chunkFilename: '[name].chunk.js',// for lazy-load
 	},
 	module:{
 		rules:[{
@@ -36,13 +42,18 @@ module.exports = {
 	},
 
 	plugins: [
+        new BundleAnalyzerPlugin(),
         new UglifyJsPlugin({	// compress
             uglifyOptions: {
                 compress: {
                     warnings: false
-                }
+                },
             },
         	sourceMap: true
+        }),
+        new webpack.optimize.CommonsChunkPlugin({   // common chunk
+            name: 'vendor',
+            minChunks: Infinity,
         }),
 	    new webpack.LoaderOptionsPlugin({		// debug mode
 			debug: true

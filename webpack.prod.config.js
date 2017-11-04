@@ -6,11 +6,13 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
     entry: {
-        index: path.resolve(__dirname, 'src/js/alipay.js')
+        index: path.resolve(__dirname, 'src/js/alipay.js'),
+        vendor: ['lodash'],
     },
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: '[name].[chunkhash:8].js',
+        chunkFilename: '[name].chunk.[chunkhash:8].js',
     },
     module:{
         rules:[{
@@ -47,12 +49,20 @@ module.exports = {
 
     plugins: [
         new CleanWebPackPlugin(['build']),
-        new UglifyJsPlugin({   // compress
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            minChunks: Infinity,
+        }),
+        new UglifyJsPlugin({
             sourceMap: false,
             uglifyOptions: {
                 compress: {
                     warnings: false
-                }
+                },
+                output: {
+                    comments: false,
+                    beautify: false,
+                },
             }
         }),
         new webpack.DefinePlugin({
@@ -60,7 +70,7 @@ module.exports = {
                 NODE_ENV: '"production"'
             }
         }),
-        new ExtractTextPlugin({        // unique package，单独打包css文件
+        new ExtractTextPlugin({
             filename: 'style.css',
             allChunks: false
         }),

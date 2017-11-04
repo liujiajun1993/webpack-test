@@ -4,7 +4,8 @@
   "description": "",
   "main": "alipay.js",
   "dependencies": {
-    "jQuery": "^1.7.4"
+    "jQuery": "^1.7.4",
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "babel-core": "^6.23.1",
@@ -22,6 +23,7 @@
     "uglifyjs-webpack-plugin": "^1.0.1",
     "url-loader": "^0.6.2",
     "webpack": "^2.2.1",
+    "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.4.1"
   },
   "scripts": {
